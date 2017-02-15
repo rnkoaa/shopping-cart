@@ -30,4 +30,9 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> findOne(Long productId) {
         return null;
     }
+
+    @Override
+    public Product save(Product product) {
+        return productRepository.save(product);
+    }
 }

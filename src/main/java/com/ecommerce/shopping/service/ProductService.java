@@ -12,4 +12,6 @@ public interface ProductService {
     Optional<Product> findBySerial(String serialNumber);
 
     Optional<Product> findOne(Long productId);
+
+    Product save(Product product);
 }

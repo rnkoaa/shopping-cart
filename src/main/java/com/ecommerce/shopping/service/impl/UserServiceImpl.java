@@ -31,4 +31,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username);
         return Optional.ofNullable(user);
     }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }

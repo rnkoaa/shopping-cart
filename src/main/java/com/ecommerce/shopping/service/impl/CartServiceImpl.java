@@ -38,31 +38,14 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public Cart addItemToCart(User user, Product product) {
-        if (user.getId() == null) {
-            Optional<User> optionalUser = userService.findByUserName(user.getUsername());
-            user = optionalUser
-                    .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
-        }
-
-        if (product.getId() == null) {
-            Optional<Product> optionalProduct = productService.findBySerial(product.getSerialNumber());
-            product = optionalProduct
-                    .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
-                            "supplied serial number"));
-        }
-
-        Cart cart = cartRepository.findByUser(user);
-
-        CartItem cartItem = CartItem.builder()
-                .cart(cart)
-                .product(product)
-                .quantity(1)
-                .unitPrice(new BigDecimal(4.90))
-                .build();
-        cart.addItem(cartItem);
-
-        return cartRepository.save(cart);
+        return addItem(user, product, 1);
     }
+
+    @Override
+    public Cart addItemToCart(User user, Product product, int quantity) {
+        return addItem(user, product, quantity);
+    }
+
 
     @Transactional
     @Override
@@ -78,18 +61,9 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
                         "supplied serial number"));
 
-        Cart cart = cartRepository.findByUser(user);
-
-        CartItem cartItem = CartItem.builder()
-                .cart(cart)
-                .product(product)
-                .quantity(1)
-                .unitPrice(new BigDecimal(4.90))
-                .build();
-        cart.addItem(cartItem);
-
-        return cartRepository.save(cart);
+        return updateCart(user, product, 1);
     }
+
 
     @Transactional
     @Override
@@ -97,22 +71,13 @@ public class CartServiceImpl implements CartService {
         Optional<User> optionalUser = userService.findOne(userId);
         User user = optionalUser
                 .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
+
         Optional<Product> optionalProduct = productService.findOne(productId);
         Product product = optionalProduct
                 .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
                         "supplied serial number"));
 
-        Cart cart = cartRepository.findByUser(user);
-
-        CartItem cartItem = CartItem.builder()
-                .cart(cart)
-                .product(product)
-                .quantity(1)
-                .unitPrice(new BigDecimal(4.90))
-                .build();
-        cart.addItem(cartItem);
-
-        return cartRepository.save(cart);
+        return updateCart(user, product, 1);
     }
 
     @Override
@@ -130,6 +95,54 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartRepository.findByUser(user);
         cart.getItems().clear();
+        return cartRepository.save(cart);
+    }
+
+    @Override
+    public Optional<Cart> findByUser(User user) {
+        Cart cart = cartRepository.findByUser(user);
+        return Optional.ofNullable(cart);
+    }
+
+    private Cart addItem(User user, Product product, int quantity) {
+        if (user.getId() == null) {
+            Optional<User> optionalUser = userService.findByUserName(user.getUsername());
+            user = optionalUser
+                    .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
+        }
+
+        if (product.getId() == null) {
+            Optional<Product> optionalProduct = productService.findBySerial(product.getSerialNumber());
+            product = optionalProduct
+                    .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
+                            "supplied serial number"));
+        }
+
+        return updateCart(user, product, quantity);
+    }
+
+
+    private Cart updateCart(User user, Product product, int quantity) {
+        Cart cart = cartRepository.findByUser(user);
+
+        Optional<CartItem> mayBeExists = cart.findItem(product);
+
+        CartItem cartItem;
+        if (mayBeExists.isPresent()) {
+            cartItem = mayBeExists.get();
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        } else {
+            cartItem = CartItem.builder()
+                               .cart(cart)
+                               .product(product)
+                               .quantity(quantity)
+                               .unitPrice(new BigDecimal(4.90))
+                               .build();
+        }
+        cart.setUser(user);
+        cart.addItem(cartItem);
+        user.setCart(cart);
+
         return cartRepository.save(cart);
     }
 }
