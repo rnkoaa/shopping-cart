@@ -121,7 +121,6 @@ public class CartServiceImpl implements CartService {
         return updateCart(user, product, quantity);
     }
 
-
     private Cart updateCart(User user, Product product, int quantity) {
         Cart cart = cartRepository.findByUser(user);
 
@@ -140,7 +139,7 @@ public class CartServiceImpl implements CartService {
                                .build();
         }
         cart.setUser(user);
-        cart.addItem(cartItem);
+        cart.updateItem(cartItem);
         user.setCart(cart);
 
         return cartRepository.save(cart);

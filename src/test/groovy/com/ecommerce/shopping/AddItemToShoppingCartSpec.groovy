@@ -138,6 +138,56 @@ class AddItemToShoppingCartSpec extends Specification {
         assert item.quantity == 2
     }
 
+    def "Adding the same product should increase the count of the cart items"() {
+        given:
+        def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+        def product = Product.builder().name("Product-1").serialNumber("1234").build();
+        def cart = Cart.builder().build();
+
+        cart.setUser(user)
+        user.setCart(cart)
+
+        when:
+        user = userService.save(user);
+        product = productService.save(product);
+
+
+        then:
+        user != null
+        user.id > 0L
+        user.cart != null
+
+        and:
+        product != null
+        product.id > 0L
+
+        when:
+        cart = cartService.addItemToCart(user, product)
+
+        then:
+        cart != null
+        cart.items.size() > 0 && cart.items.size() == 1
+
+        and:
+        CartItem firstItem = ++cart.items.iterator() as CartItem;
+
+        assert firstItem != null
+        assert firstItem.quantity == 1
+
+        when:
+        cart = cartService.addItemToCart(user, product)
+
+        then:
+        cart != null
+        cart.items.size() > 0 && cart.items.size() == 1
+
+        expect:
+        CartItem item = ++cart.items.iterator() as CartItem;
+
+        assert item != null
+        assert item.quantity == 2
+    }
+
     def "Find Cart for users with Items"() {
         given:
         def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()

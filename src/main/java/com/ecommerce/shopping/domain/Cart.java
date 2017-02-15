@@ -57,4 +57,15 @@ public class Cart {
                                 && Objects.equals(cartItem.getProduct().getId(), product.getId()))
                 .findFirst();
     }
+
+    public void removeItem(CartItem removeItem) {
+        if (items != null) {
+            items.removeIf(cartItem -> Objects.equals(cartItem.getId(), removeItem.getId()));
+        }
+    }
+
+    public void updateItem(CartItem cartItem) {
+        removeItem(cartItem);
+        addItem(cartItem);
+    }
 }
