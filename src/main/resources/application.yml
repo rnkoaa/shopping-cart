@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: "local"
+
+---
+spring:
+  datasource:
+    username: "root"
+    password: "admin2193"
+    driver-class-name: "com.mysql.jdbc.Driver"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: "org.hibernate.dialect.MySQL5Dialect"
+
+---
+spring:
+  profiles: "local"
+  datasource:
+    url: "jdbc:mysql://localhost:3306/shopping-cart"
+
+
+---
+spring:
+  profiles: "docker_windows"
+  datasource:
+    url: "jdbc:mysql://192.168.99.100:3306/shopping-cart"
+

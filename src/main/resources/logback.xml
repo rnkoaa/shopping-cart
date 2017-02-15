@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="APPLICATION_NAME" value="shopping-cart"/>
+    <property name="APP_LOG_DIR" value="./logs"/>
+    <property name="APP_LOG_FILE_NAME" value="shopping-cart"/>
+
+<!--    <property name="APPLICATION_NAME" value="${APPLICATION_NAME}"/>
+    <property name="APP_LOG_DIR" value="${APP_LOG_DIR}"/>
+    <property name="APP_LOG_FILE_NAME" value="${APP_LOG_FILE_NAME}"/>-->
+    <property name="MAX_FILE_SIZE" value="10MB"/>
+    <property name="MAX_DAYS_TO_KEEP" value="30"/>
+    <property name="APP_LOG_FILE"
+              value="${APP_LOG_DIR}/${APP_LOG_FILE_NAME}.log}"/>
+
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{0}.%M\(%line\) -
+                %msg%n
+            </Pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover. Make sure the path matches the one in the file element or else
+             the rollover logs are placed in the working directory. -->
+            <!--<fileNamePattern>${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APPLICATION_NAME}}%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <FileNamePattern>${APP_LOG_DIR}/${APP_LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log
+            </FileNamePattern>
+
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>${MAX_DAYS_TO_KEEP}</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{0}.%M\(%line\) -
+                %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.hibernate.loader" level="INFO" />
+    <logger name="org.springframework.beans" level="INFO" />
+    <logger name="org.springframework.boot" level="INFO"/>
+    <logger name="com.ecommerce.shopping" level="INFO" additivity="false">
+        <!-- <appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="fileAppender"/>
+    </logger>
+</configuration>
