@@ -69,7 +69,6 @@ class AddItemToShoppingCartSpec extends Specification {
         thrown(ProductNotFoundException.class)
     }
 
-
     def "For a given proper conditions, a user can add an item to a cart"() {
         given:
         def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
@@ -235,5 +234,87 @@ class AddItemToShoppingCartSpec extends Specification {
 
         assert item != null
         assert item.quantity == 1
+    }
+
+    def "removing an item from the cart ensures the size of the cart reduces"() {
+        given:
+        def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+        def product = Product.builder().name("Product-1").serialNumber("1234").build();
+        def cart = Cart.builder().build();
+
+        cart.setUser(user)
+        user.setCart(cart)
+
+        when:
+        user = userService.save(user);
+        product = productService.save(product);
+
+
+        then:
+        user != null
+        user.id > 0L
+        user.cart != null
+
+        and:
+        product != null
+        product.id > 0L
+
+        when:
+        cart = cartService.addItemToCart(user, product)
+
+        then:
+        cart != null
+        cart.items.size() > 0 && cart.items.size() == 1
+
+        when:
+        cart = cartService.removeItem(user, product)
+
+        then:
+        cart != null
+        cart.items.size() == 0
+    }
+
+    def "updating the count of an item succeeds"() {
+        given:
+        def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+        def product = Product.builder().name("Product-1").serialNumber("1234").build();
+        def cart = Cart.builder().build();
+
+        cart.setUser(user)
+        user.setCart(cart)
+
+        when:
+        user = userService.save(user);
+        product = productService.save(product);
+
+
+        then:
+        user != null
+        user.id > 0L
+        user.cart != null
+
+        and:
+        product != null
+        product.id > 0L
+
+        when:
+        cart = cartService.addItemToCart(user, product)
+
+        then:
+        cart != null
+        cart.items.size() > 0 && cart.items.size() == 1
+
+        when:
+        cart = cartService.updateItem(user, product, 2)
+
+        then:
+        cart != null
+        cart.items.size() > 0 && cart.items.size() == 1
+
+        and:
+        CartItem item = ++cart.items.iterator() as CartItem;
+
+        assert item != null
+        assert item.quantity == 3
     }
 }

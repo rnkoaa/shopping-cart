@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -81,8 +83,9 @@ public class UserRepositoryTest {
 
         userRepository.delete(user);
 
-        final Cart byUser = cartRepository.findByUser(user);
+        final Optional<Cart> byUser = cartRepository.findByUser(user);
         assertThat(byUser).isNull();
+        assertThat(byUser.isPresent()).isTrue();
 
     }
 }

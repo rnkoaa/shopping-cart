@@ -10,6 +10,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -58,7 +60,7 @@ public class CartRepositoryTest {
     }
 
     @Test
-    public void givenUserCartCanBeFound(){
+    public void givenUserCartCanBeFound() {
         User user = User.builder().firstName("Richard")
                         .lastName("Amoako Agyei")
                         .username("richard")
@@ -81,11 +83,12 @@ public class CartRepositoryTest {
 
 
         //when we try to find the cart by the given user
-        Cart foundCart = cartRepository.findByUser(user);
+        Optional<Cart> foundCart = cartRepository.findByUser(user);
         //then the id's will have been assigned.
         assertThat(foundCart).isNotNull();
-        assertThat(foundCart.getId()).isGreaterThan(0L);
-        assertThat(foundCart.getUser()).isNotNull();
-        assertThat(foundCart.getUser().getId()).isGreaterThan(0L);
+        assertThat(foundCart.isPresent()).isTrue();
+        assertThat(foundCart.get().getId()).isGreaterThan(0L);
+        assertThat(foundCart.get().getUser()).isNotNull();
+        assertThat(foundCart.get().getUser().getId()).isGreaterThan(0L);
     }
 }

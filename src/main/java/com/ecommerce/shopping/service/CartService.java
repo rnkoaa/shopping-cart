@@ -22,7 +22,11 @@ public interface CartService {
 
     Cart removeItem(Long userId, Long productId);
 
+    Cart removeItem(User user, Product product);
+
     Cart clearCart(User user);
 
     Optional<Cart> findByUser(User user);
+
+    Cart updateItem(User user, Product product, int itemCount);
 }

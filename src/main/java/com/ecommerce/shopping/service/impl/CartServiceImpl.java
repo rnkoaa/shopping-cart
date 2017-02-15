@@ -82,7 +82,35 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart removeItem(Long userId, Long productId) {
-        return null;
+        Optional<User> optionalUser = userService.findOne(userId);
+        User user = optionalUser
+                .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
+
+        Optional<Product> optionalProduct = productService.findOne(productId);
+        Product product = optionalProduct
+                .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
+                        "supplied serial number"));
+
+        return removeItemFromCart(user, product);
+    }
+
+    @Override
+    public Cart removeItem(User user, Product product) {
+
+        if (user.getId() == null) {
+            Optional<User> optionalUser = userService.findByUserName(user.getUsername());
+            user = optionalUser
+                    .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
+        }
+
+        if (product.getId() == null) {
+            Optional<Product> optionalProduct = productService.findBySerial(product.getSerialNumber());
+            product = optionalProduct
+                    .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
+                            "supplied serial number"));
+        }
+
+        return removeItemFromCart(user, product);
     }
 
     @Override
@@ -93,15 +121,38 @@ public class CartServiceImpl implements CartService {
                     .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
         }
 
-        Cart cart = cartRepository.findByUser(user);
-        cart.getItems().clear();
-        return cartRepository.save(cart);
+        final User cartUser = user;
+        Optional<Cart> optionalCart = cartRepository.findByUser(user);
+        return optionalCart.map(cart -> {
+            cart.getItems().clear();
+            return cart;
+        }).orElseGet(() -> {
+            Cart cart = Cart.builder().user(cartUser).build();
+            return cartRepository.save(cart);
+        });
+
     }
 
     @Override
     public Optional<Cart> findByUser(User user) {
-        Cart cart = cartRepository.findByUser(user);
-        return Optional.ofNullable(cart);
+        return cartRepository.findByUser(user);
+    }
+
+    @Override
+    public Cart updateItem(User user, Product product, int itemCount) {
+        if (user.getId() == null) {
+            Optional<User> optionalUser = userService.findByUserName(user.getUsername());
+            user = optionalUser
+                    .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
+        }
+
+        if (product.getId() == null) {
+            Optional<Product> optionalProduct = productService.findBySerial(product.getSerialNumber());
+            product = optionalProduct
+                    .orElseThrow(() -> new ProductNotFoundException("There is no product with the" +
+                            "supplied serial number"));
+        }
+        return updateCart(user, product, itemCount);
     }
 
     private Cart addItem(User user, Product product, int quantity) {
@@ -121,27 +172,41 @@ public class CartServiceImpl implements CartService {
         return updateCart(user, product, quantity);
     }
 
+    private Cart removeItemFromCart(User user, Product product) {
+        final User cartUser = user;
+        Optional<Cart> optionalCart = cartRepository.findByUser(user);
+        return optionalCart.map(cart -> {
+            Optional<CartItem> item = cart.findItem(product);
+            item.ifPresent(cart::removeItem);
+            return cartRepository.save(cart);
+        }).orElseGet(() -> {
+            Cart cart = Cart.builder().user(cartUser).build();
+            return cartRepository.save(cart);
+        });
+    }
+
     private Cart updateCart(User user, Product product, int quantity) {
-        Cart cart = cartRepository.findByUser(user);
+        Optional<Cart> optionalCart = cartRepository.findByUser(user);
 
-        Optional<CartItem> mayBeExists = cart.findItem(product);
+        final Cart mCart = optionalCart.map(cart -> {
+            Optional<CartItem> optionalItem = cart.findItem(product);
+            CartItem updatedCartItem = optionalItem.map(cartItem -> {
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
+                return cartItem;
+            }).orElse(CartItem.builder()
+                              .cart(cart)
+                              .product(product)
+                              .quantity(quantity)
+                              .unitPrice(new BigDecimal(4.90))
+                              .build());
 
-        CartItem cartItem;
-        if (mayBeExists.isPresent()) {
-            cartItem = mayBeExists.get();
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-        } else {
-            cartItem = CartItem.builder()
-                               .cart(cart)
-                               .product(product)
-                               .quantity(quantity)
-                               .unitPrice(new BigDecimal(4.90))
-                               .build();
-        }
-        cart.setUser(user);
-        cart.updateItem(cartItem);
-        user.setCart(cart);
+            cart.updateItem(updatedCartItem);
+            cart.setUser(user);
+            user.setCart(cart);
 
-        return cartRepository.save(cart);
+            return cart;
+        }).orElse(Cart.builder().user(user).build());
+
+        return cartRepository.save(mCart);
     }
 }
