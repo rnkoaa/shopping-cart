@@ -1,5 +1,6 @@
 package com.ecommerce.shopping.service.impl;
 
+import com.ecommerce.shopping.domain.Cart;
 import com.ecommerce.shopping.domain.User;
 import com.ecommerce.shopping.repository.UserRepository;
 import com.ecommerce.shopping.service.UserService;
@@ -34,6 +35,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
+        if (user.getCart() == null)
+            user.setCart(Cart.builder().user(user).build());
         return userRepository.save(user);
     }
 }

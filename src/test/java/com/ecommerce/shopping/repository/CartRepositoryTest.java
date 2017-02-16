@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created on 2/14/2017.
  */
-@ActiveProfiles("local")
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 @Transactional

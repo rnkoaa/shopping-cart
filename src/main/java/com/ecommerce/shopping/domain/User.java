@@ -11,11 +11,11 @@ import java.util.Set;
  * Created on 2/14/2017.
  */
 @Entity
-@Builder
 @ToString(exclude = {"cart"})
 @EqualsAndHashCode(exclude = {"cart", "addresses"})
 @Getter
 @Setter
+@Builder
 public class User {
 
     @Tolerate
@@ -24,18 +24,33 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
+    @Setter
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @Getter
+    @Setter
     private String username;
 
     private String firstName;
     private String lastName;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Getter
+    @Setter
     private Cart cart;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Getter
+    @Setter
     private Set<Address> addresses = Sets.newHashSet();
 
+    public void addAddress(Address address) {
+        if (addresses == null)
+            addresses = Sets.newHashSet();
+
+        address.setUser(this);
+        addresses.add(address);
+    }
 }

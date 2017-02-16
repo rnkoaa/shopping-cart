@@ -17,7 +17,6 @@ import spock.lang.Specification
  * Created using Intellij IDE
  * Created by rnkoaa on 2/15/17.
  */
-@ActiveProfiles("local")
 @ContextConfiguration(classes = ShoppingCartApplication.class)
 @Transactional
 class CartServiceSpec extends Specification {
@@ -38,7 +37,7 @@ class CartServiceSpec extends Specification {
     
     def "An unknown user cannot add a product to a cart"() {
         given:
-            def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+            def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build() as User
         
         when:
             cartService.addItemToCart(user, 0L)

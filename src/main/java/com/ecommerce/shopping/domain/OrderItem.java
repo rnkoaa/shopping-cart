@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"product", "unitPrice"})
 @ToString
 public class OrderItem {
 

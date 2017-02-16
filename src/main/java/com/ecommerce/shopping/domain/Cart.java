@@ -22,7 +22,8 @@ import java.util.Set;
 public class Cart {
 
     @Tolerate
-    Cart(){}
+    Cart() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -73,6 +74,6 @@ public class Cart {
     }
 
     public boolean isEmpty() {
-        return items != null && items.size() == 0;
+        return items == null || items.isEmpty();
     }
 }

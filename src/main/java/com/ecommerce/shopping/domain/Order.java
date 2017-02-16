@@ -15,10 +15,14 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"items", "subTotal"})
 @ToString
 @Table(name = "orders")
 public class Order {
+
+
+    @Column(name = "order_key", updatable = false, nullable = false, length = 32)
+    private String orderKey;
 
     @Tolerate
     Order() {
@@ -42,4 +46,8 @@ public class Order {
     private Set<OrderItem> items = Sets.newHashSet();
 
     private BigDecimal subTotal;
+
+    public boolean isEmpty() {
+        return items == null || items.isEmpty();
+    }
 }
