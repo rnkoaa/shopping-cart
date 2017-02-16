@@ -123,13 +123,14 @@ public class CartServiceImpl implements CartService {
 
         final User cartUser = user;
         Optional<Cart> optionalCart = cartRepository.findByUser(user);
-        return optionalCart.map(cart -> {
-            cart.getItems().clear();
-            return cart;
-        }).orElseGet(() -> {
-            Cart cart = Cart.builder().user(cartUser).build();
-            return cartRepository.save(cart);
-        });
+        return optionalCart
+                .map(cart -> {
+                    cart.getItems().clear();
+                    return cart;
+                }).orElseGet(() -> {
+                    Cart cart = Cart.builder().user(cartUser).build();
+                    return cartRepository.save(cart);
+                });
 
     }
 

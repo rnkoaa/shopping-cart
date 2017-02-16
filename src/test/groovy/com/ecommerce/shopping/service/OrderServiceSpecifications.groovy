@@ -1,10 +1,7 @@
 package com.ecommerce.shopping.service
 
 import com.ecommerce.shopping.ShoppingCartApplication
-import com.ecommerce.shopping.domain.Address
-import com.ecommerce.shopping.domain.Cart
-import com.ecommerce.shopping.domain.Product
-import com.ecommerce.shopping.domain.User
+import com.ecommerce.shopping.domain.*
 import com.ecommerce.shopping.util.CartEmptyException
 import com.ecommerce.shopping.util.UserNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -181,5 +178,50 @@ class OrderServiceSpecifications extends Specification {
         assertThat(order2.getShippingAddress()).isNotNull()
         assertThat(order2.getShippingAddress()).isEqualTo(order2.getBillingAddress())
         assertThat(order2.getId()).isEqualTo(order.getId())
+    }
+
+
+    def "Apply A payment to a completed order"() {
+        given:
+        def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+        PaymentMethod paymentMethod = PaymentMethod.builder().name("Richard Agyei").paymentType(PaymentType.AMERICAN_EXPRESS).user(user).build()
+        def product = Product.builder().name("Product-1").serialNumber("1234").build()
+        def cart = Cart.builder().build()
+
+        cart.setUser(user)
+        user.setCart(cart)
+
+        user = userService.save(user)
+        user.addPaymentMethod(paymentMethod)
+
+        product = productService.save(product)
+        cart = cartService.addItemToCart(user, product)
+        def order = orderService.createOrder(user)
+
+        def billingAddress = Address.builder().user(user).street("2698 lower 147th Ct. W.").city("Rosemount").state("MN").zipCode("55068").build();
+
+        user.addAddress(billingAddress)
+
+        user = userService.save(user)
+
+        def addresses = user.getAddresses()
+        def addressList = new ArrayList<>(addresses)
+        def savedAddress = addressList.get(0)
+        order.setBillingAddress(billingAddress)
+        order = orderService.save(order)
+        order.setShippingAddress(billingAddress)
+        order = orderService.save(order)
+
+        List<PaymentMethod> payments = new ArrayList<>(user.getPaymentMethods())
+
+        paymentMethod = payments.get(0)
+
+        when:
+        order = orderService.applyPayment(order, paymentMethod)
+
+        then:
+        assertThat(order.payments).hasSize(1)
+        assertThat(order.orderStatus).isEqualTo(OrderStatus.PAID)
+
     }
 }

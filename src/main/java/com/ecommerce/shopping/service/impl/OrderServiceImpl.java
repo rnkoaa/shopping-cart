@@ -66,4 +66,12 @@ public class OrderServiceImpl implements OrderService {
     public Order save(Order order) {
         return orderRepository.save(order);
     }
+
+    @Override
+    public Order applyPayment(Order order, PaymentMethod paymentMethod) {
+        final Payment payment = Payment.builder().paymentMethod(paymentMethod).amount(order.getSubTotal()).order(order).build();
+        order.addPayment(payment);
+
+        return orderRepository.save(order);
+    }
 }

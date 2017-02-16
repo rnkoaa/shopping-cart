@@ -46,6 +46,20 @@ public class User {
     @Setter
     private Set<Address> addresses = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Getter
+    @Setter
+    private Set<PaymentMethod> paymentMethods = Sets.newHashSet();
+
+
+    public void addPaymentMethod(PaymentMethod paymentMethod){
+        if (paymentMethods == null)
+            paymentMethods = Sets.newHashSet();
+
+        paymentMethod.setUser(this);
+        paymentMethods.add(paymentMethod);
+    }
+
     public void addAddress(Address address) {
         if (addresses == null)
             addresses = Sets.newHashSet();

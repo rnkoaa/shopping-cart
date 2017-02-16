@@ -15,22 +15,25 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"items", "subTotal"})
+@EqualsAndHashCode(exclude = {"items", "subTotal", "payments"})
 @ToString
 @Table(name = "orders")
 public class Order {
 
-
-    @Column(name = "order_key", updatable = false, nullable = false, length = 32)
-    private String orderKey;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Tolerate
-    Order() {
+    public Order() {
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "order_key", updatable = false, nullable = false, length = 32)
+    private String orderKey;
+
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -49,5 +52,18 @@ public class Order {
 
     public boolean isEmpty() {
         return items == null || items.isEmpty();
+    }
+
+    @OneToMany(mappedBy = "order")
+    public Set<Payment> payments = Sets.newHashSet();
+
+    public void addPayment(Payment payment) {
+        if (payments == null)
+            payments = Sets.newHashSet();
+
+        payment.setOrder(this);
+        payments.add(payment);
+
+        this.orderStatus = OrderStatus.PAID;
     }
 }
