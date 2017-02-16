@@ -26,4 +26,5 @@ nbdist/
 
 
 ### Application Specifics ###
-/logs/
+/logs/debug.log
+*.log
