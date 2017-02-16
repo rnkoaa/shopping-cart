@@ -68,4 +68,8 @@ public class Cart {
         removeItem(cartItem);
         addItem(cartItem);
     }
+
+    public boolean isEmpty() {
+        return items != null && items.size() == 0;
+    }
 }

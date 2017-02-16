@@ -1,13 +1,13 @@
 spring:
   profiles:
-    active: "docker_windows"
-
----
-spring:
+    active: "local"
   datasource:
     username: "root"
     password: "admin2193"
     driver-class-name: "com.mysql.jdbc.Driver"
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
   jpa:
     show-sql: true
     hibernate:
@@ -20,12 +20,12 @@ spring:
 spring:
   profiles: "local"
   datasource:
-    url: "jdbc:mysql://localhost:3306/shopping-cart"
+    url: "jdbc:mysql://localhost:3306/shopping-cart?useSSL=false"
 
 
 ---
 spring:
   profiles: "docker_windows"
   datasource:
-    url: "jdbc:mysql://192.168.99.100:3306/shopping-cart"
+    url: "jdbc:mysql://192.168.99.100:3306/shopping-cart?useSSL=false"
 

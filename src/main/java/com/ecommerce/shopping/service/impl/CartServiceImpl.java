@@ -114,7 +114,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart clearCart(User user) {
+    public Cart clear(User user) {
         if (user.getId() == null) {
             Optional<User> optionalUser = userService.findByUserName(user.getUsername());
             user = optionalUser
