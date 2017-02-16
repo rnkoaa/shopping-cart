@@ -38,7 +38,7 @@ public class ShoppingCartApplicationTests {
 
     @Test
     public void testInsertProduct() {
-        Product product = Product.builder().name("Product 1").serialNumber("1234").build();
+        Product product = Product.builder().name("Product 1").serialNumber("1267434").build();
 
         assertThat(product.getId()).isNull();
 

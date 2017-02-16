@@ -2,6 +2,7 @@ package com.ecommerce.shopping.domain;
 
 import com.google.common.collect.Sets;
 import lombok.*;
+import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -10,14 +11,16 @@ import java.util.Set;
  * Created on 2/14/2017.
  */
 @Entity
-@Getter
-@Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString(exclude = {"cart"})
 @EqualsAndHashCode(exclude = {"cart", "addresses"})
+@Getter
+@Setter
 public class User {
+
+    @Tolerate
+    User() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

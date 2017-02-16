@@ -1,7 +1,7 @@
 package com.ecommerce.shopping.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
 
@@ -9,10 +9,15 @@ import javax.persistence.*;
  * Created on 2/14/2017.
  */
 @Entity
-@Data
 @Builder
+@Getter
+@Setter
+@ToString(exclude = {"user"})
+@EqualsAndHashCode
 public class Address {
 
+    @Tolerate
+    public Address(){}
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

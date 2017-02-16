@@ -2,6 +2,7 @@ package com.ecommerce.shopping.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,11 +12,15 @@ import java.math.BigDecimal;
  */
 @Entity
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
+@Getter
 @ToString(exclude = {"product"})
 @EqualsAndHashCode(exclude = {"cart"})
 public class CartItem {
+
+    @Tolerate
+    CartItem() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,8 +1,8 @@
 package com.ecommerce.shopping.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,9 +11,17 @@ import java.math.BigDecimal;
  * Created on 2/14/2017.
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
+@EqualsAndHashCode
+@ToString
 public class OrderItem {
+
+    @Tolerate
+    public OrderItem() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

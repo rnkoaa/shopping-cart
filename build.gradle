@@ -69,5 +69,6 @@ dependencies {
 		exclude module: "groovy-all"
 		exclude module: "spock-core"
 	}
+	testCompile group: 'org.assertj', name: 'assertj-core-java8', version: '1.0.0m1'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
