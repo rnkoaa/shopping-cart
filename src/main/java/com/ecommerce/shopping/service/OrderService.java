@@ -14,5 +14,13 @@ public interface OrderService {
 
     Order applyPayment(Order order, PaymentMethod paymentMethod);
 
+    Order applyPayment(Long orderId, PaymentMethod paymentMethod);
+
     Order cancel(Order order);
+
+    Order cancel(Long orderId);
+
+    Order complete(Order order);
+
+    Order complete(Long orderId);
 }

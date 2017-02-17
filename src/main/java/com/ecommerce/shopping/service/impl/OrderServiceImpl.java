@@ -5,6 +5,7 @@ import com.ecommerce.shopping.repository.OrderRepository;
 import com.ecommerce.shopping.service.OrderService;
 import com.ecommerce.shopping.service.UserService;
 import com.ecommerce.shopping.util.CartEmptyException;
+import com.ecommerce.shopping.util.OrderNotFoundException;
 import com.ecommerce.shopping.util.UserNotFoundException;
 import com.ecommerce.shopping.util.strings.RandomStringGenerator;
 import org.springframework.stereotype.Service;
@@ -76,9 +77,35 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order applyPayment(Long orderId, PaymentMethod paymentMethod) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        Order order = optionalOrder.orElseThrow(() -> new OrderNotFoundException("There is no order for this Supplied Id."));
+        return applyPayment(order, paymentMethod);
+    }
+
+    @Override
     public Order cancel(Order order) {
-        if(order.getOrderStatus() != OrderStatus.PAID || order.getOrderStatus() )
+        // if(order.getOrderStatus() != OrderStatus.PAID || order.getOrderStatus() )
         order.setOrderStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
+    }
+
+    @Override
+    public Order cancel(Long orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        Order order = optionalOrder.orElseThrow(() -> new OrderNotFoundException("There is no order for this Supplied Id."));
+        return cancel(order);
+    }
+
+    @Override
+    public Order complete(Order order) {
+        return null;
+    }
+
+    @Override
+    public Order complete(Long orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        Order order = optionalOrder.orElseThrow(() -> new OrderNotFoundException("There is no order for this Supplied Id."));
+        return complete(order);
     }
 }
