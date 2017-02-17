@@ -74,4 +74,11 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.save(order);
     }
+
+    @Override
+    public Order cancel(Order order) {
+        if(order.getOrderStatus() != OrderStatus.PAID || order.getOrderStatus() )
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(order);
+    }
 }

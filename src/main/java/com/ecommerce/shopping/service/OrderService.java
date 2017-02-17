@@ -13,4 +13,6 @@ public interface OrderService {
     Order save(Order order);
 
     Order applyPayment(Order order, PaymentMethod paymentMethod);
+
+    Order cancel(Order order);
 }

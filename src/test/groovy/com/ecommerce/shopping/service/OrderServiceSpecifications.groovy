@@ -222,6 +222,48 @@ class OrderServiceSpecifications extends Specification {
         then:
         assertThat(order.payments).hasSize(1)
         assertThat(order.orderStatus).isEqualTo(OrderStatus.PAID)
+    }
+    
+    def "An order which is not yet completed can be cancelled"() {
+        given:
+        def user = User.builder().firstName("Richard").lastName("Amoako").username("richard").build()
+        PaymentMethod paymentMethod = PaymentMethod.builder().name("Richard Agyei").paymentType(PaymentType.AMERICAN_EXPRESS).user(user).build()
+        def product = Product.builder().name("Product-1").serialNumber("1234").build()
+        def cart = Cart.builder().build()
 
+        cart.setUser(user)
+        user.setCart(cart)
+
+        user = userService.save(user)
+        user.addPaymentMethod(paymentMethod)
+
+        product = productService.save(product)
+        cart = cartService.addItemToCart(user, product)
+        def order = orderService.createOrder(user)
+
+        def billingAddress = Address.builder().user(user).street("2698 lower 147th Ct. W.").city("Rosemount").state("MN").zipCode("55068").build();
+
+        user.addAddress(billingAddress)
+
+        user = userService.save(user)
+
+        def addresses = user.getAddresses()
+        def addressList = new ArrayList<>(addresses)
+        def savedAddress = addressList.get(0)
+        order.setBillingAddress(billingAddress)
+        order = orderService.save(order)
+        order.setShippingAddress(billingAddress)
+        order = orderService.save(order)
+
+        List<PaymentMethod> payments = new ArrayList<>(user.getPaymentMethods())
+
+        paymentMethod = payments.get(0)
+        //order = orderService.applyPayment(order, paymentMethod)
+
+        when:
+        order = orderService.cancel(order);
+        then:
+        assertThat(order.payments).hasSize(1)
+        assertThat(order.orderStatus).isEqualTo(OrderStatus.PAID)
     }
 }

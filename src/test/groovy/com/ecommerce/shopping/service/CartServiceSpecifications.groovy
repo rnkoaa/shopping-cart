@@ -19,7 +19,7 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = ShoppingCartApplication.class)
 @Transactional
-class CartServiceSpec extends Specification {
+class CartServiceSpecifications extends Specification {
     
     @Autowired
     private CartService cartService
