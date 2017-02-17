@@ -20,12 +20,12 @@ import java.util.Set;
 @Table(name = "orders")
 public class Order {
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
-
     @Tolerate
     public Order() {
     }
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
