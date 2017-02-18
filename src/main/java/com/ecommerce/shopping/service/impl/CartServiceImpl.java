@@ -140,6 +140,18 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public Optional<Cart> findByUsername(String username) {
+        Optional<User> optionalUser = userService.findByUserName(username);
+        return optionalUser.flatMap(user -> Optional.of(user.getCart()));
+    }
+
+    @Override
+    public Optional<Cart> findByUserId(Long id) {
+        Optional<User> optionalUser = userService.findOne(id);
+        return optionalUser.flatMap(user -> Optional.of(user.getCart()));
+    }
+
+    @Override
     public Cart updateItem(User user, Product product, int itemCount) {
         if (user.getId() == null) {
             Optional<User> optionalUser = userService.findByUserName(user.getUsername());
@@ -195,11 +207,11 @@ public class CartServiceImpl implements CartService {
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
                 return cartItem;
             }).orElse(CartItem.builder()
-                              .cart(cart)
-                              .product(product)
-                              .quantity(quantity)
-                              .unitPrice(new BigDecimal(4.90))
-                              .build());
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .unitPrice(new BigDecimal(4.90))
+                    .build());
 
             cart.updateItem(updatedCartItem);
             cart.setUser(user);

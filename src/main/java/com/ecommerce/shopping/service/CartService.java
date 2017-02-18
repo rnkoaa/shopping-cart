@@ -28,5 +28,9 @@ public interface CartService {
 
     Optional<Cart> findByUser(User user);
 
+    Optional<Cart> findByUsername(String username);
+
+    Optional<Cart> findByUserId(Long id);
+
     Cart updateItem(User user, Product product, int itemCount);
 }
