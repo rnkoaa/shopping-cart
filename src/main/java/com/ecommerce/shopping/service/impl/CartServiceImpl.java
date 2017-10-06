@@ -114,7 +114,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart clearCart(User user) {
+    public Cart clear(User user) {
         if (user.getId() == null) {
             Optional<User> optionalUser = userService.findByUserName(user.getUsername());
             user = optionalUser
@@ -123,19 +123,32 @@ public class CartServiceImpl implements CartService {
 
         final User cartUser = user;
         Optional<Cart> optionalCart = cartRepository.findByUser(user);
-        return optionalCart.map(cart -> {
-            cart.getItems().clear();
-            return cart;
-        }).orElseGet(() -> {
-            Cart cart = Cart.builder().user(cartUser).build();
-            return cartRepository.save(cart);
-        });
+        return optionalCart
+                .map(cart -> {
+                    cart.getItems().clear();
+                    return cart;
+                }).orElseGet(() -> {
+                    Cart cart = Cart.builder().user(cartUser).build();
+                    return cartRepository.save(cart);
+                });
 
     }
 
     @Override
     public Optional<Cart> findByUser(User user) {
         return cartRepository.findByUser(user);
+    }
+
+    @Override
+    public Optional<Cart> findByUsername(String username) {
+        Optional<User> optionalUser = userService.findByUserName(username);
+        return optionalUser.flatMap(user -> Optional.of(user.getCart()));
+    }
+
+    @Override
+    public Optional<Cart> findByUserId(Long id) {
+        Optional<User> optionalUser = userService.findOne(id);
+        return optionalUser.flatMap(user -> Optional.of(user.getCart()));
     }
 
     @Override
@@ -194,11 +207,11 @@ public class CartServiceImpl implements CartService {
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
                 return cartItem;
             }).orElse(CartItem.builder()
-                              .cart(cart)
-                              .product(product)
-                              .quantity(quantity)
-                              .unitPrice(new BigDecimal(4.90))
-                              .build());
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .unitPrice(new BigDecimal(4.90))
+                    .build());
 
             cart.updateItem(updatedCartItem);
             cart.setUser(user);

@@ -3,6 +3,7 @@ package com.ecommerce.shopping.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import lombok.*;
+import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,12 +15,15 @@ import java.util.Set;
  */
 @Entity
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 @ToString(exclude = {"user", "items"})
 @EqualsAndHashCode(exclude = "items")
 public class Cart {
 
+    @Tolerate
+    Cart() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,5 +71,9 @@ public class Cart {
     public void updateItem(CartItem cartItem) {
         removeItem(cartItem);
         addItem(cartItem);
+    }
+
+    public boolean isEmpty() {
+        return items == null || items.isEmpty();
     }
 }

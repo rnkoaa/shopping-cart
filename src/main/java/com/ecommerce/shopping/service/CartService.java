@@ -24,9 +24,13 @@ public interface CartService {
 
     Cart removeItem(User user, Product product);
 
-    Cart clearCart(User user);
+    Cart clear(User user);
 
     Optional<Cart> findByUser(User user);
+
+    Optional<Cart> findByUsername(String username);
+
+    Optional<Cart> findByUserId(Long id);
 
     Cart updateItem(User user, Product product, int itemCount);
 }

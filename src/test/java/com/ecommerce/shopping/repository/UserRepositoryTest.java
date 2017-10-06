@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created on 2/14/2017.
  */
-@ActiveProfiles("local")
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 @Transactional
@@ -40,7 +39,7 @@ public class UserRepositoryTest {
     public void givenUserCartCanBeFound() {
         User user = User.builder().firstName("Richard")
                         .lastName("Amoako Agyei")
-                        .username("richard")
+                        .username("ricfsdfhard")
                         .build();
 
         Cart cart = Cart.builder().user(user).build();
@@ -63,7 +62,7 @@ public class UserRepositoryTest {
     public void whenUserIsDeletedCartIsAlsoDeleted() {
         User user = User.builder().firstName("Richard")
                         .lastName("Amoako Agyei")
-                        .username("richard")
+                        .username("ricdshard")
                         .build();
 
         Cart cart = Cart.builder().user(user).build();
@@ -84,8 +83,6 @@ public class UserRepositoryTest {
         userRepository.delete(user);
 
         final Optional<Cart> byUser = cartRepository.findByUser(user);
-        assertThat(byUser).isNull();
-        assertThat(byUser.isPresent()).isTrue();
-
+        assertThat(byUser).isEmpty();
     }
 }

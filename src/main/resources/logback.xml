@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
-    <property name="DEV_HOME" value="c:/logs" />
-
-    <appender name="FILE-AUDIT"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./debug.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>.%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n
             </Pattern>
         </encoder>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>./archived/debug.%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
     </appender>
 
-    <logger name="ch.qos.logback" additivity="false" level="ERROR" />
-    <logger name="com.ecommerce.shopping" level="debug"
-            additivity="false">
-        <appender-ref ref="FILE-AUDIT" />
+    <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>./logs/shopping-cart.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <FileNamePattern>rest-demo.%d{yyyy-MM-dd}.log</FileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+        </encoder>
+    </appender>
+    <!--<appender name="minuteRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash; rollover every minute &ndash;&gt;
+            <FileNamePattern>./logs/rest-demo-minute.%d{yyyy-MM-dd_HH-mm}.log</FileNamePattern>
+
+            &lt;!&ndash; keep 30 minutes' worth of history &ndash;&gt;
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</Pattern>
+        </encoder>
+    </appender>-->
+
+    <logger name="com.ecommerce.shopping" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="dailyRollingFileAppender"/>
+        <!--<appender-ref ref="minuteRollingFileAppender"/>-->
+        <appender-ref ref="consoleAppender" />
     </logger>
 
-    <root level="error">
-        <appender-ref ref="FILE-AUDIT" />
+    <root>
+        <level value="INFO" />
+        <appender-ref ref="consoleAppender" />
     </root>
-
 </configuration>
