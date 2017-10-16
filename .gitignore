@@ -15,10 +15,13 @@
 *.iws
 *.iml
 *.ipr
+out/
+
+target
 
 ### NetBeans ###
 nbproject/private/
-build/
+
 nbbuild/
 dist/
 nbdist/
