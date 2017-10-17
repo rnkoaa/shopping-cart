@@ -11,8 +11,14 @@ node {
         }
         
         stage('Build application java classes'){
-            sh './gradlew assemble'
+            sh 'make build'
+        } 
+
+        stage('Upload Artifact to Nexus'){
+            sh 'make upload'
         }
+
+
     }
     finally {
         // stage 'Collect test reports'
