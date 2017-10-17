@@ -35,11 +35,11 @@ node {
     }
     finally {
         /*stage 'Collect test reports'
-        step([$class: 'JUnitResultArchiver', testResults: '**/reports/*.xml'])
+        // step([$class: 'JUnitResultArchiver', testResults: '**/reports/*.xml'])
 
-        stage 'Clean up'
-        sh 'make clean'
-        sh 'make logout'*/
-        println("Done Building")
+        // stage 'Clean up'
+        // sh 'make clean'
+        // sh 'make logout'*/
+        // println("Done Building")
     }
 }
