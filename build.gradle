@@ -1,8 +1,16 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.1.RELEASE'
+		springBootVersion = '1.5.7.RELEASE'
+
+		nexusUrl = System.env.NEXUS_HOST
+		nexusPort = System.env.NEXUS_PORT
+		nexusUser = System.env.NEXUS_USER
+		nexusPassword = System.env.NEXUS_PASSWORD
 	}
 	repositories {
+		maven {
+			url "http://${nexusUrl}:${nexusPort}/repository/maven-public/"
+		}
 		mavenCentral()
 	}
 	dependencies {
@@ -11,6 +19,7 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -23,6 +32,9 @@ jar {
 sourceCompatibility = 1.8
 
 repositories {
+	maven {
+		url "http://${nexusUrl}:${nexusPort}/repository/maven-public/"
+	}
 	mavenCentral()
 }
 
@@ -41,7 +53,14 @@ sourceSets{
 	}
 }
 
+
+configurations {
+	deployerJars
+}
+
 dependencies {
+	deployerJars "org.apache.maven.wagon:wagon-http:2.2+"
+
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-jdbc'){
@@ -57,7 +76,7 @@ dependencies {
 	runtime('org.hsqldb:hsqldb')
 	runtime('mysql:mysql-connector-java:5.1.40')
 
-	compileOnly('org.projectlombok:lombok')
+	compileOnly("org.projectlombok:lombok:${lombokVersion}")
 	
 	testCompile("org.codehaus.groovy:groovy-all:2.4.8")
 	
@@ -71,4 +90,29 @@ dependencies {
 	}
 	testCompile group: 'org.assertj', name: 'assertj-core-java8', version: '1.0.0m1'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			configuration = configurations.deployerJars
+		
+			repository(
+					url: "http://${nexusUrl}:${nexusPort}/repository/maven-releases/") {
+				authentication(userName: nexusUser, password: nexusPassword)
+			}
+			snapshotRepository(
+					url: "http://${nexusUrl}:${nexusPort}/repository/maven-snapshots/") {
+				authentication(userName: nexusUser, password: nexusPassword)
+			}
+
+			pom {
+
+				version = "${jar.version}"
+				artifactId = "${jar.baseName}"
+				groupId = 'com.ecommerce.shopping'
+			}
+		}
+	}
 }

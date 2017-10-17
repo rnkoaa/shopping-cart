@@ -10,6 +10,8 @@ import com.ecommerce.shopping.service.ProductService;
 import com.ecommerce.shopping.service.UserService;
 import com.ecommerce.shopping.util.ProductNotFoundException;
 import com.ecommerce.shopping.util.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,8 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
 
     private final ProductService productService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CartServiceImpl.class);
 
     public CartServiceImpl(UserService userService, CartRepository cartRepository, ProductService productService) {
         this.userService = userService;
@@ -51,6 +55,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart addItemToCart(User user, Long productId) {
         if (user.getId() == null) {
+            LOGGER.info("UserId is not set for the user? check to see if the user is valid");
             Optional<User> optionalUser = userService.findByUserName(user.getUsername());
             user = optionalUser
                     .orElseThrow(() -> new UserNotFoundException("There is no user with this username"));
