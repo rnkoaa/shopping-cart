@@ -6,8 +6,9 @@ node {
         }
 
         stage('Run unit/integration tests'){
-            //sh './gradlew test'
-            echo 'Test in this stage'
+            sh 'make unit-test'
+
+            junit 'build/test-results/test/*.xml'
         }
         
         stage('Build application java classes'){

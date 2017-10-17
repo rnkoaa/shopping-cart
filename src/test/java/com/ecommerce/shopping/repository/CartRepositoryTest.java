@@ -18,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created on 2/14/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest()
+@SpringBootTest(
+        "spring.profiles.active=unit-test"
+)
 @Transactional
 public class CartRepositoryTest {
 

@@ -39,7 +39,8 @@ repositories {
 }
 
 test{
-	systemProperties(System.properties)
+	//systemProperties(System.properties)
+	systemProperties = System.properties
 }
 
 sourceSets{
@@ -98,12 +99,10 @@ uploadArchives {
 		mavenDeployer {
 			configuration = configurations.deployerJars
 		
-			repository(
-					url: "http://${nexusUrl}:${nexusPort}/repository/maven-releases/") {
+			repository(url: "http://${nexusUrl}:${nexusPort}/repository/maven-releases/") {
 				authentication(userName: nexusUser, password: nexusPassword)
 			}
-			snapshotRepository(
-					url: "http://${nexusUrl}:${nexusPort}/repository/maven-snapshots/") {
+			snapshotRepository(url: "http://${nexusUrl}:${nexusPort}/repository/maven-snapshots/") {
 				authentication(userName: nexusUser, password: nexusPassword)
 			}
 
