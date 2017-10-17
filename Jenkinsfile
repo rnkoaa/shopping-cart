@@ -1,7 +1,9 @@
 node {
-    checkout scm
-
+        
     try {
+        stage 'Checkout From Scm'
+        git 'https://github.com/rnkoaa/shopping-cart.git'
+
         stage 'Run unit/integration tests'
         //sh './gradlew test'
         echo 'Test in this stage'
