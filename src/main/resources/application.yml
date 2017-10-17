@@ -22,6 +22,16 @@ spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/shopping-cart?useSSL=false"
 
+---
+
+spring:
+  profiles:
+    active: "unit-test"
+  datasource:
+    username: sa
+    password: sa
+    url: "jdbc:h2:mem:shopping-cart-db;DB_CLOSE_DELAY=-1"
+    driver-class-name: "org.h2.Driver"
 
 ---
 spring:
