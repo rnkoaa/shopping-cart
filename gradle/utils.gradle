@@ -1,0 +1,75 @@
+import java.text.SimpleDateFormat
+
+//apply from: "${parent ? parent.rootDir : "."}/gradle/versions.gradle"
+apply from 'version.gradle'
+
+task incrementBuildNumber {
+    doLast {
+        logger.lifecycle path + "Increment Build Number"
+        Properties props = new Properties()
+        File propsFile = new File("gradle/build.properties")
+        if (!propsFile.exists()) {
+            propsFile.createNewFile();
+        }
+
+        props.load(propsFile.newDataInputStream())
+        def buildNumber = props.getProperty('BUILD_NUMBER')
+        if (buildNumber != null) {
+            def buildNumberAsDecimal = (buildNumber as BigDecimal) + 1
+            project.ext.setProperty("BUILD_NUMBER", buildNumberAsDecimal.toString())
+            ext.BUILD_NUMBER = buildNumberAsDecimal.toString()
+        } else {
+            project.ext.setProperty("BUILD_NUMBER", "1")
+            ext.BUILD_NUMBER = "1"
+        }
+        props.setProperty("BUILD_NUMBER", project.property("BUILD_NUMBER").toString())
+        props.setProperty("BUILD_TIME", buildTime())
+
+        props.store(propsFile.newWriter(), null)
+        props.load(propsFile.newDataInputStream())
+    }
+}
+
+task updateVersion {
+
+    doLast {
+        isCI();
+
+        if (!isRelease()) {
+            def jenkinsBuildNumber = getBuildNumberFromFile()
+
+            //logger.lifecycle path + " Jenkins Build Number: ${jenkinsBuildNumber}"
+            project.version = "0.0.${jenkinsBuildNumber}-SNAPSHOT"
+        }
+    }
+}
+
+boolean isCI() {
+    def ciEnvironment = false;
+    if (!isRelease()) {
+        if (project.hasProperty("CI")) {
+            ciEnvironment = project.property("CI")
+        }
+    }
+
+    //logger.lifecycle path + " Are We running in CI environment: ${ciEnvironment}"
+    ciEnvironment
+}
+
+task cleanResources(type: Delete) {
+    delete 'build/resources'
+}
+
+boolean isRelease() {
+    def isRelease = false
+    if (project.hasProperty("release")) {
+        isRelease = project.property("release")
+    }
+    isRelease
+}
+
+def buildTime() {
+    final dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ")
+    dateFormat.timeZone = TimeZone.getTimeZone('GMT')
+    dateFormat.format(new Date())
+}

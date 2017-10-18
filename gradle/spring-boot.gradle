@@ -1,0 +1,48 @@
+import java.text.SimpleDateFormat
+
+springBoot {
+    mainClass = "${mainClassName}"
+    executable = true
+    // This statement tells the Gradle Spring Boot plugin
+    // to generate a file
+    // build/resources/main/META-INF/build-info.properties
+    // that is picked up by Spring Boot to display
+    // via /info endpoint.
+    buildInfo {
+        // Generate extra build info.
+        additionalProperties = [
+                by                   : System.properties['user.name'],
+                operatingSystem      : "${System.properties['os.name']} (${System.properties['os.version']})",
+                continuousIntegration: System.getenv('CI') ? true : false,
+                machine              : InetAddress.localHost.hostName,
+                // Override buildInfo property time
+                time                 : buildTime(),
+                // Override name property
+                name                 : project.name,
+                jenkinsTag           : System.getenv("BUILD_TAG") ?: "",
+                jenkinsBuildNumber   : System.getenv("BUILD_NUMBER") ?: ""
+        ]
+    }
+}
+
+bootRun {
+    addResources = true
+    systemProperty 'management.info.git.mode', 'FULL'
+
+    //add system properties
+    systemProperties System.properties
+}
+
+/** Set Build dependencies **/
+//always process resources before compiling the java source files
+//compileJava.dependsOn(processResources)
+bootRepackage {
+    //mainClass = 'com.movie.genius.registry.RegistryApplication'
+    mainClass = "${mainClassName}"
+}
+
+def buildTime() {
+    final dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ")
+    dateFormat.timeZone = TimeZone.getTimeZone('GMT')
+    dateFormat.format(new Date())
+}

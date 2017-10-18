@@ -23,6 +23,7 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply from: 'gradle/spring-boot.gradle'
 
 jar {
 	baseName = 'shopping-cart'
@@ -39,7 +40,6 @@ repositories {
 }
 
 test{
-	//systemProperties(System.properties)
 	systemProperties = System.properties
 }
 
@@ -69,12 +69,11 @@ dependencies {
 	}
 	runtime('org.springframework.boot:spring-boot-devtools')
 	
-	compile group: 'com.google.guava', name: 'guava', version: '21.0'
+	compile group: 'com.google.guava', name: 'guava', version: '23.0'
 	compile("org.hibernate:hibernate-java8:5.0.0.Final")
 	compile("com.zaxxer:HikariCP:2.6.0")
 
 	runtime('com.h2database:h2')
-	runtime('org.hsqldb:hsqldb')
 	runtime('mysql:mysql-connector-java:5.1.40')
 
 	compileOnly("org.projectlombok:lombok:${lombokVersion}")
@@ -115,3 +114,4 @@ uploadArchives {
 		}
 	}
 }
+
