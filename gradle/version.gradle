@@ -1,0 +1,15 @@
+def getBuildNumberFromFile() {
+    def buildNumber = "1"
+    File propsFile = new File("gradle/build.properties")
+    if (propsFile.exists()) {
+        Properties props = new Properties()
+        props.load(propsFile.newDataInputStream())
+        buildNumber = props.getProperty('BUILD_NUMBER') ?: "1"
+    }
+    buildNumber
+}
+
+// Export methods by turning them into closures
+ext {
+    getBuildNumberFromFile = this.&getBuildNumberFromFile
+}

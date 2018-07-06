@@ -19,7 +19,23 @@ node {
             sh 'make upload'
         }
 
+<<<<<<< Updated upstream
 
+=======
+        stage("upload"){
+            def jarFileName = "shopping-cart-0.0.${BUILD_NUMBER}-SNAPSHOT.jar"
+            def artifactName = "${WORKSPACE}/build/libs/${jarFileName}"
+            nexusArtifactUploader credentialsId: 'nexus-credentials',
+            type: 'jar',
+            groupId: 'com.rnkoaa.shop', 
+            nexusUrl: 'nexus:8081/nexus', 
+            file: "${artifactName}",
+            nexusVersion: 'nexus3', 
+            protocol: 'http', 
+            repository: 'maven-public', 
+            version: '1.0.0-SNAPSHOT'
+        }
+>>>>>>> Stashed changes
     }
     finally {
         // stage 'Collect test reports'
