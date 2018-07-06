@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.7.RELEASE'
+		springBootVersion = '1.5.14.RELEASE'
 
 		nexusUrl = System.env.NEXUS_HOST
 		nexusPort = System.env.NEXUS_PORT
